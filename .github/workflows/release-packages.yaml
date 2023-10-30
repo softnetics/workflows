@@ -64,14 +64,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
+          cache: 'yarn'
+
+      - name: Install Changeset CLI
+        run: yarn global add @changesets/cli
 
       - name: Create Versioning Pull Request
         id: changesets
         uses: changesets/action@v1.4.2
         with:
           createGithubReleases: true
-          version: npx changeset version
-          publish: npx changeset release
+          version: changeset version
+          publish: changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
