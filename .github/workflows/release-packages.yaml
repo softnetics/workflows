@@ -62,8 +62,10 @@ jobs:
           node-version: ${{ inputs.node-version }}
           cache: 'yarn'
 
-      - name: Install Changeset CLI
-        run: yarn global add @changesets/cli
+      - name: Install dependencies
+        run: |
+          yarn global add @changesets/cli
+          yarn --frozen-lockfile
 
       - name: Create Versioning Pull Request
         id: changesets
