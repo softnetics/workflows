@@ -1,0 +1,88 @@
+name: Relase to NPM registry
+
+on:
+  workflow_call:
+    secrets:
+      GIT_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
+jobs:
+  release:
+    name: Versioning
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          # related to issue, https://github.com/changesets/action/issues/201
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.2
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Create Versioning Pull Request
+        id: changesets
+        uses: changesets/action@v1.4.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          createGithubReleases: true
+          version: pnpm changeset version
+          publish: pnpm release
+
+      - name: Transform Packages
+        id: transform-packages
+        run: |
+          PACKAGES=$(echo $PACKAGES | jq -c 'map_values({name:.name,ref:"refs/tags/\(.name)@\(.version)",imageTag:.version})')
+          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+        env:
+          PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
+
+      - name: Get deploy environment
+        id: get-deploy-environment
+        run: |
+          if [[ ${{ github.ref_name  }} == "main" ]]; then
+            echo "Deploy environment is production"
+            echo "ENVIRONMENT=prod" >> $GITHUB_OUTPUT
+          elif [[ ${{ github.ref_name  }} == "beta" ]]; then
+            echo "Deploy environment is beta"
+            echo "ENVIRONMENT=beta" >> $GITHUB_OUTPUT
+          elif [[ ${{ github.ref_name  }} == "dev" ]]; then
+            echo "Deploy environment is dev"
+            echo "ENVIRONMENT=dev" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Echo Changeset output
+        run: |
+          echo "Changeset published - ${{ steps.changesets.outputs.published }}"
+          echo "Changeset publishedPackages - ${{ toJSON(steps.changesets.outputs.publishedPackages) }}"
+          echo "Changeset hasChangesets - ${{ steps.changesets.outputs.hasChangesets }}"
+          echo "Changeset pullRequestNumber - ${{ steps.changesets.outputs.pullRequestNumber }}"
+          echo "Packages to build - ${{ toJSON(steps.transform-packages.outputs.packages) }}"

@@ -1,0 +1,25 @@
+name: Flight test
+
+on:
+  workflow_call:
+    inputs:
+      text:
+        type: string
+        description: 'Text to echo'
+        required: true
+      runs-on:
+        type: string
+        description: 'Runner to use'
+        default: 'ubuntu-latest'
+
+jobs:
+  echo:
+    name: Echo from input
+    runs-on: ${{ inputs.runs-on }}
+
+    steps:
+      - name: Echo
+        id: echo
+        run: |
+          echo ${{ inputs.text }}
+          echo "ECHO=${{ inputs.text }}" >> $GITHUB_OUTPUT
