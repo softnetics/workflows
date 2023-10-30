@@ -67,13 +67,17 @@ jobs:
           yarn global add @changesets/cli
           yarn --frozen-lockfile
 
+      - name: Run before publish
+        run: |
+          ${{ inputs.before-publish }}
+
       - name: Create Versioning Pull Request
         id: changesets
         uses: changesets/action@v1.4.2
         with:
           createGithubReleases: true
           version: changeset version
-          publish: ${{ inputs.before_publish }} && changeset publish
+          publish: changeset publish
         env:
           GITHUB_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
