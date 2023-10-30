@@ -19,7 +19,6 @@ on:
     secrets:
       GITHUB_ACTION_TOKEN:
         required: true
-        default: ${{ github.token }}
       NPM_TOKEN:
         required: true
 
