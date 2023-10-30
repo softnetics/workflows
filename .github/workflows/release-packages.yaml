@@ -11,7 +11,7 @@ on:
         type: number
         description: 'Node version to use'
         default: 20
-      before_publish:
+      before-publish:
         type: string
         description: 'Command to run before publishing'
         default: 'echo "No command to run"'
