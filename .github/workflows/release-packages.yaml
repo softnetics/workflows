@@ -28,12 +28,16 @@ on:
         value: ${{ jobs.release.outputs.published }}
       publishedPackages:
         description: 'Published packages'
+        value: ${{ jobs.release.outputs.publishedPackages }}
       hasChangesets:
         description: 'Whether there are changesets'
+        value: ${{ jobs.release.outputs.hasChangesets }}
       pullRequestNumber:
         description: 'Pull request number'
+        value: ${{ jobs.release.outputs.pullRequestNumber }}
       transformPackages:
         description: 'Packages to build'
+        value: ${{ jobs.release.outputs.transformPackages }}
 
 jobs:
   release:
