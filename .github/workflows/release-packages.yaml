@@ -17,8 +17,6 @@ on:
         default: 'echo "No command to run"'
 
     secrets:
-      GITHUB_ACTION_TOKEN:
-        required: true
       NPM_TOKEN:
         required: true
 
@@ -75,7 +73,7 @@ jobs:
           version: changeset version
           publish: ${{ inputs.before_publish }} && changeset publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTION_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Transform Packages
