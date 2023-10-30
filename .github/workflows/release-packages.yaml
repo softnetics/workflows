@@ -45,21 +45,11 @@ jobs:
     runs-on: ${{ inputs.runs-on }}
 
     outputs:
-      published:
-        description: 'Whether a changeset was published'
-        value: ${{ steps.changesets.outputs.published }}
-      publishedPackages:
-        description: 'Published packages'
-        value: ${{ steps.changesets.outputs.publishedPackages }}
-      hasChangesets:
-        description: 'Whether there are changesets'
-        value: ${{ steps.changesets.outputs.hasChangesets }}
-      pullRequestNumber:
-        description: 'Pull request number'
-        value: ${{ steps.changesets.outputs.pullRequestNumber }}
-      transformPackages:
-        description: 'Packages to build'
-        value: ${{ steps.transform-packages.outputs.packages }}
+      published: ${{ steps.changesets.outputs.published }}
+      publishedPackages: ${{ steps.changesets.outputs.publishedPackages }}
+      hasChangesets: ${{ steps.changesets.outputs.hasChangesets }}
+      pullRequestNumber: ${{ steps.changesets.outputs.pullRequestNumber }}
+      transformPackages: ${{ steps.transform-packages.outputs.packages }}
 
     steps:
       - name: Checkout Repo
