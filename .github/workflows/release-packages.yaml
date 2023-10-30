@@ -11,6 +11,10 @@ on:
         type: number
         description: 'Node version to use'
         default: 20
+      before_publish:
+        type: string
+        description: 'Command to run before publishing'
+        default: 'echo "No command to run"'
 
     secrets:
       GIT_TOKEN:
@@ -75,7 +79,7 @@ jobs:
         with:
           createGithubReleases: true
           version: changeset version
-          publish: changeset publish
+          publish: ${{ inputs.before_publish }} && changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
