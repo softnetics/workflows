@@ -17,7 +17,7 @@ on:
         default: 'echo "No command to run"'
 
     secrets:
-      GIT_TOKEN:
+      GITHUB_TOKEN:
         required: true
       NPM_TOKEN:
         required: true
