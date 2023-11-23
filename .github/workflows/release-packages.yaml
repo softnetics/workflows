@@ -15,6 +15,10 @@ on:
         type: string
         description: 'Command to run before publishing'
         default: 'echo "No command to run"'
+      package-manager:
+        type: string
+        description: 'Package manager to use'
+        default: 'yarn'
 
     secrets:
       NPM_TOKEN:
@@ -56,16 +60,30 @@ jobs:
           # related to issue, https://github.com/changesets/action/issues/201
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        if: ${{ inputs.package-manager }} == 'pnpm'
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
-          cache: 'yarn'
+          cache: ${{ inputs.package-manager }}
 
       - name: Install dependencies
         run: |
-          yarn global add @changesets/cli
-          yarn --frozen-lockfile
+          if [ "${{ inputs.package-manager }}" = "yarn" ]; then
+            yarn global add @changesets/cli
+            yarn install --frozen-lockfile
+          elif [ "${{ inputs.package-manager }}" = "npm" ]; then
+            npm install -g @changesets/cli
+            npm install
+          elif [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+            pnpm add -g @changesets/cli
+            pnpm install --frozen-lockfile
+          fi
 
       - name: Run before publish
         run: |
