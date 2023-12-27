@@ -8,9 +8,11 @@ on:
         description: "Runner to use"
         default: "ubuntu-latest"
       node-version:
-        type: number
+        type: string
         description: "Node version to use"
-        default: 20
+      bun-version:
+        type: string
+        description: "Bun version to use"
       before-publish:
         type: string
         description: "Command to run before publishing"
@@ -68,14 +70,16 @@ jobs:
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
-        if: ${{ inputs.package-manager == 'bun' }}
+        if: ${{ inputs.bun-version }}
+        with:
+          version: ${{ inputs.bun-version }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
-        if: ${{ inputs.package-manager != 'bun' }}
+        if: ${{ inputs.node-version }}
         with:
           node-version: ${{ inputs.node-version }}
-          cache: ${{ inputs.package-manager }}
+          cache: ${{ inputs.package-manager == 'bun' && '' || inputs.package-manager }}
 
       - name: Install dependencies
         run: |
