@@ -62,17 +62,17 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
-        if: ${{ inputs.package-manager }} == 'pnpm'
+        if: ${{ inputs.package-manager == 'pnpm' }}
         with:
           version: 8
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
-        if: ${{ inputs.package-manager }} == 'bun'
+        if: ${{ inputs.package-manager == 'bun' }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
-        if: ${{ inputs.package-manager }} != 'bun'
+        if: ${{ inputs.package-manager != 'bun' }}
         with:
           node-version: ${{ inputs.node-version }}
           cache: ${{ inputs.package-manager }}
