@@ -5,20 +5,20 @@ on:
     inputs:
       runs-on:
         type: string
-        description: 'Runner to use'
-        default: 'ubuntu-latest'
+        description: "Runner to use"
+        default: "ubuntu-latest"
       node-version:
         type: number
-        description: 'Node version to use'
+        description: "Node version to use"
         default: 20
       before-publish:
         type: string
-        description: 'Command to run before publishing'
+        description: "Command to run before publishing"
         default: 'echo "No command to run"'
       package-manager:
         type: string
-        description: 'Package manager to use'
-        default: 'yarn'
+        description: "Package manager to use"
+        default: "yarn"
 
     secrets:
       NPM_TOKEN:
@@ -26,19 +26,19 @@ on:
 
     outputs:
       published:
-        description: 'Whether a changeset was published'
+        description: "Whether a changeset was published"
         value: ${{ jobs.release.outputs.published }}
       publishedPackages:
-        description: 'Published packages'
+        description: "Published packages"
         value: ${{ jobs.release.outputs.publishedPackages }}
       hasChangesets:
-        description: 'Whether there are changesets'
+        description: "Whether there are changesets"
         value: ${{ jobs.release.outputs.hasChangesets }}
       pullRequestNumber:
-        description: 'Pull request number'
+        description: "Pull request number"
         value: ${{ jobs.release.outputs.pullRequestNumber }}
       transformPackages:
-        description: 'Packages to build'
+        description: "Packages to build"
         value: ${{ jobs.release.outputs.transformPackages }}
 
 jobs:
@@ -66,8 +66,13 @@ jobs:
         with:
           version: 8
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        if: ${{ inputs.package-manager }} == 'bun'
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
+        if: ${{ inputs.package-manager }} != 'bun'
         with:
           node-version: ${{ inputs.node-version }}
           cache: ${{ inputs.package-manager }}
@@ -83,6 +88,9 @@ jobs:
           elif [ "${{ inputs.package-manager }}" = "pnpm" ]; then
             pnpm add -g @changesets/cli
             pnpm install --frozen-lockfile
+          elif [ "${{ inputs.package-manager }}" = "bun" ]; then
+            bun add -g @changesets/cli
+            bun i --frozen-lockfile
           fi
 
       - name: Run before publish
