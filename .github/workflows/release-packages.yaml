@@ -21,6 +21,10 @@ on:
         type: string
         description: "Package manager to use"
         default: "yarn"
+      release-mode:
+        type: string
+        description: "Changeset release | tag"
+        default: release
 
     secrets:
       NPM_TOKEN:
@@ -107,7 +111,7 @@ jobs:
         with:
           createGithubReleases: true
           version: changeset version
-          publish: changeset publish
+          publish: changeset ${{ inputs.release-mode }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
