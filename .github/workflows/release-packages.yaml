@@ -24,7 +24,7 @@ on:
       release-mode:
         type: string
         description: "Changeset release | tag"
-        default: release
+        default: publish
 
     secrets:
       NPM_TOKEN:
