@@ -13,6 +13,10 @@ on:
       bun-version:
         type: string
         description: "Bun version to use"
+      pnpm-version:
+        type: string
+        description: "Pnpm version to use"
+        default: 8
       before-publish:
         type: string
         description: "Command to run before publishing"
@@ -70,7 +74,7 @@ jobs:
         uses: pnpm/action-setup@v2
         if: ${{ inputs.package-manager == 'pnpm' }}
         with:
-          version: 8
+          version: ${{ inputs.pnpm-version }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
