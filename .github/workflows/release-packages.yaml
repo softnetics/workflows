@@ -32,7 +32,7 @@ on:
 
     secrets:
       NPM_TOKEN:
-        required: true
+        required: false
 
     outputs:
       published:
@@ -111,7 +111,7 @@ jobs:
 
       - name: Create Versioning Pull Request
         id: changesets
-        uses: changesets/action@v1.4.2
+        uses: changesets/action@v1.4.9
         with:
           createGithubReleases: true
           version: changeset version
